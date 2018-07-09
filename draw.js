@@ -22,10 +22,12 @@ window.onload = function () {
 	initCanvasSize();
 
 	draw();
+	// 鼠标按下时即创建曲线端点
 	canvas.onmousedown = function (e) {
 		mouseDownDotPos.push(getDotPos(e));
 		isMouseDown = true;
 	}
+	// 鼠标按下并拖动时创建曲线手柄端点
 	canvas.onmousemove = function (e) {
 		if(isMouseDown) {
 			mouseUpDotPos[mouseDownDotPos.length - 1] = getDotPos(e);
@@ -49,6 +51,7 @@ window.onload = function () {
 	}
 }
 
+// 初始化canvas尺寸
 function initCanvasSize() {
 	canvas.width = window.innerWidth * 0.8;
 	canvas.height = window.innerHeight * 0.8;
@@ -71,6 +74,7 @@ function draw() {
 	window.requestAnimationFrame(draw);
 }
 
+// 绘制贝塞尔曲线端点
 function drawMouseDownDot() {
 	ctx.fillStyle = settings.mouseDownDotColor;
 	for(var i = 0; i < mouseDownDotPos.length; i++) {
@@ -80,6 +84,7 @@ function drawMouseDownDot() {
 	}
 }
 
+// 绘制贝塞尔曲线手柄端点
 function drawMouseUpDot() {
 	for(var i = 0; i < mouseUpDotPos.length; i++) {
 		ctx.beginPath();
@@ -94,6 +99,7 @@ function drawMouseUpDot() {
 	}
 }
 
+// 绘制直线
 function drawStraightLine() {
 	ctx.strokeStyle = settings.straightLineColor;
 	for(var i = 0; i < mouseUpDotPos.length; i++) {
@@ -105,6 +111,7 @@ function drawStraightLine() {
 	}
 }
 
+// 绘制贝塞尔曲线
 function drawBeizerCurve() {
 	if(mouseUpDotPos.length >= 2 && mouseDownDotPos.length >= 2) {
 		for(var i = 0; i < mouseUpDotPos.length - 1; i++) {
@@ -119,16 +126,20 @@ function drawBeizerCurve() {
 		}
 	}
 }
+
+// 返回鼠标点击处在canvas中的坐标
 function getDotPos(e) {
 	var x = e.clientX - canvas.offsetLeft;
 	var y = e.clientY - canvas.offsetTop;
 	return {x, y};
 }
 
+// 求两点距离
 function distance(pos1, pos2) {
 	return Math.sqrt((pos1.x - pos2.x) * (pos1.x - pos2.x) + (pos1.y- pos2.y) *(pos1.y- pos2.y));
 }
 
+// 求pos1关于pos2的对称点
 function symmetricPoint(pos1, pos2) {
 	var x = (pos1.x > pos2.x) ? (pos2.x - (pos1.x - pos2.x)) : (pos2.x + (pos2.x - pos1.x));
 	var y = (pos1.y > pos2.y) ? (pos2.y - (pos1.y - pos2.y)) : (pos2.y + (pos2.y - pos1.y));
