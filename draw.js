@@ -18,6 +18,8 @@ var mouseDownDotPos = new Array();
 var mouseUpDotPos = new Array();
 
 var isMouseDown = false;
+var isDragged = false;
+
 window.onload = function () {
 	initCanvasSize();
 
@@ -25,16 +27,22 @@ window.onload = function () {
 	// 鼠标按下时即创建曲线端点
 	canvas.onmousedown = function (e) {
 		mouseDownDotPos.push(getDotPos(e));
+		isDragged = false;
 		isMouseDown = true;
 	}
 	// 鼠标按下并拖动时创建曲线手柄端点
 	canvas.onmousemove = function (e) {
 		if(isMouseDown) {
 			mouseUpDotPos[mouseDownDotPos.length - 1] = getDotPos(e);
+			isDragged = true;
 		}
 	}
 	canvas.onmouseup = function (e) {
 		isMouseDown = false;
+		//如果鼠标按下即放开，即无拖动事件，则手柄端点与曲线端点重合
+		if(!isDragged) {
+			mouseUpDotPos[mouseDownDotPos.length - 1] = getDotPos(e);
+		}
 	}
 
 	document.onkeydown = function (e) {
@@ -68,8 +76,8 @@ function draw() {
 
 	drawStraightLine();
 	drawBeizerCurve();
-	drawMouseDownDot();
 	drawMouseUpDot();
+	drawMouseDownDot();
 	
 	window.requestAnimationFrame(draw);
 }
